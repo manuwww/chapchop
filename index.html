@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chap Chop - Audio Dramas</title>
+    <link rel="icon" href="favicon.ico">
+
+    <style>
+        /* Global CSS Variables for Theming */
+        :root {
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --text-secondary: #555555;
+            --card-background: #f9f9f9;
+            --border-color: #eaeaea;
+            --hover-color: #0070f3;
+
+            /* Genre Tag Colors (can be customized) */
+            --genre-fantasy: #e0f2f7; /* Light Blue */
+            --genre-fantasy-text: #01579b;
+            --genre-scifi: #e3f2fd; /* Lighter Blue */
+            --genre-scifi-text: #1976d2;
+            --genre-mystery: #fff3e0; /* Light Orange */
+            --genre-mystery-text: #e65100;
+            --genre-horror: #ffebee; /* Light Red */
+            --genre-horror-text: #c62828;
+            --genre-adventure: #e8f5e9; /* Light Green */
+            --genre-adventure-text: #2e7d32;
+            --genre-historical: #ede7f6; /* Light Purple */
+            --genre-historical-text: #4527a0;
+            --genre-drama: #fbe9e7; /* Light Coral */
+            --genre-drama-text: #d84315;
+            --genre-thriller: #fffde7; /* Light Yellow */
+            --genre-thriller-text: #fbc02d;
+            --genre-survival: #e0f2f7; /* Light Cyan */
+            --genre-survival-text: #00838f;
+            --genre-supernatural: #f3e5f5; /* Light Violet */
+            --genre-supernatural-text: #6a1b9a;
+            --genre-romance: #fce4ec; /* Light Pink */
+            --genre-romance-text: #ad1457;
+            --genre-psychological: #e0f7fa; /* Light Teal */
+            --genre-psychological-text: #006064;
+            --genre-surreal: #efefef; /* Light Grey */
+            --genre-surreal-text: #616161;
+            --genre-default: #eeeeee; /* Grey for undefined/default */
+            --genre-default-text: #424242;
+        }
+
+        [data-theme='dark'] {
+            --background-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --text-secondary: #cccccc;
+            --card-background: #2a2a2a;
+            --border-color: #444444;
+            --hover-color: #90caf9;
+
+            /* Dark theme genre colors - adjust for better contrast */
+            --genre-fantasy: #0d47a1;
+            --genre-fantasy-text: #e3f2fd;
+            --genre-scifi: #1565c0;
+            --genre-scifi-text: #e0f2f7;
+            --genre-mystery: #bf360c;
+            --genre-mystery-text: #fff3e0;
+            --genre-horror: #b71c1c;
+            --genre-horror-text: #ffebee;
+            --genre-adventure: #1b5e20;
+            --genre-adventure-text: #e8f5e9;
+            --genre-historical: #311b92;
+            --genre-historical-text: #ede7f6;
+            --genre-drama: #a30000;
+            --genre-drama-text: #ffccbc;
+            --genre-thriller: #f57f17;
+            --genre-thriller-text: #fff8e1;
+            --genre-survival: #006064;
+            --genre-survival-text: #e0f7fa;
+            --genre-supernatural: #4a148c;
+            --genre-supernatural-text: #f3e5f5;
+            --genre-romance: #880e4f;
+            --genre-romance-text: #fce4ec;
+            --genre-psychological: #004d40;
+            --genre-psychological-text: #e0f7fa;
+            --genre-surreal: #424242;
+            --genre-surreal-text: #eeeeee;
+            --genre-default: #424242;
+            --genre-default-text: #eeeeee;
+        }
+
+        html, body {
+            padding: 0;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Layout */
+        .layout-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-title-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .app-title {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--text-color);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .app-footer {
+            padding: 1rem;
+            text-align: center;
+            background-color: var(--card-background);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: auto; /* Push footer to bottom */
+        }
+
+        /* Theme Switcher */
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+            color: var(--text-color);
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--border-color);
+        }
+
+        /* Home Page */
+        .home-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 0.5rem;
+        }
+
+        .home-main {
+            padding: 5rem 0 2rem 0; /* Adjusted padding-bottom to make space for tags */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .home-title {
+            margin: 0;
+            line-height: 1.15;
+            font-size: 4rem;
+            text-align: center;
+        }
+
+        .home-subtitle {
+            margin: 1rem 0 2rem 0; /* Adjusted margin-bottom for tags */
+            font-size: 1.5rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Genre Tags Container */
+        .genre-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 3rem; /* Space between tags and story grid */
+            max-width: 800px; /* Constrain width for better centering */
+            padding: 0 1rem; /* Add horizontal padding for smaller screens */
+        }
+
+        .genre-tag {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap; /* Prevent tags from wrapping words */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .genre-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+
+        .genre-tag.active {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-weight: 700;
+            outline: 2px solid var(--hover-color); /* Highlight active tag */
+            outline-offset: 2px;
+        }
+
+        /* Specific Genre Colors */
+        .genre-tag[data-genre="Fantasy"] { background-color: var(--genre-fantasy); color: var(--genre-fantasy-text); }
+        .genre-tag[data-genre="Sci-Fi"] { background-color: var(--genre-scifi); color: var(--genre-scifi-text); }
+        .genre-tag[data-genre="Mystery"] { background-color: var(--genre-mystery); color: var(--genre-mystery-text); }
+        .genre-tag[data-genre="Horror"] { background-color: var(--genre-horror); color: var(--genre-horror-text); }
+        .genre-tag[data-genre="Adventure"] { background-color: var(--genre-adventure); color: var(--genre-adventure-text); }
+        .genre-tag[data-genre="Historical"] { background-color: var(--genre-historical); color: var(--genre-historical-text); }
+        .genre-tag[data-genre="Drama"] { background-color: var(--genre-drama); color: var(--genre-drama-text); }
+        .genre-tag[data-genre="Thriller"] { background-color: var(--genre-thriller); color: var(--genre-thriller-text); }
+        .genre-tag[data-genre="Survival"] { background-color: var(--genre-survival); color: var(--genre-survival-text); }
+        .genre-tag[data-genre="Supernatural"] { background-color: var(--genre-supernatural); color: var(--genre-supernatural-text); }
+        .genre-tag[data-genre="Romance"] { background-color: var(--genre-romance); color: var(--genre-romance-text); }
+        .genre-tag[data-genre="Psychological Thriller"],
+        .genre-tag[data-genre="Psychological Drama"] { background-color: var(--genre-psychological); color: var(--genre-psychological-text); }
+        .genre-tag[data-genre="Surreal"] { background-color: var(--genre-surreal); color: var(--genre-surreal-text); }
+        .genre-tag[data-genre="All"] { background-color: var(--genre-default); color: var(--genre-default-text); } /* "All" tag */
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 0; /* Tags are now above, so reset this margin */
+            padding: 0 20px;
+        }
+
+        /* Story Card */
+        .story-card {
+            margin: 0;
+            padding: 1rem;
+            color: inherit;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            transition: color 0.15s ease, border-color 0.15s ease;
+            width: 100%;
+            max-width: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: var(--card-background);
+            cursor: pointer;
+            overflow: hidden;
+            /* Added for filtering */
+            display: flex; /* Ensure it's display flex to be shown */
+            transition: opacity 0.3s ease;
+        }
+
+        .story-card.hidden {
+            display: none; /* Hide cards that don't match the filter */
+        }
+
+        .story-card:hover,
+        .story-card:focus,
+        .story-card:active {
+            color: var(--hover-color);
+            border-color: var(--hover-color);
+        }
+
+        .story-card img {
+            border-radius: 8px;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 2 / 3;
+            object-fit: cover;
+        }
+
+        .story-card-title {
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .story-card-author {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Story Detail Page */
+        .story-detail-container {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .story-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .story-poster-detail {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 300px;
+            height: 450px;
+            object-fit: cover;
+        }
+
+        .story-details {
+            text-align: center;
+        }
+
+        .story-details h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .story-details .story-author-detail {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .story-details .story-description-detail {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .chapters-section {
+            margin-top: 3rem;
+        }
+
+        .chapters-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .chapter-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .chapter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            margin-bottom: 10px;
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .chapter-item:hover {
+            background-color: var(--border-color);
+            border-color: var(--hover-color);
+        }
+
+        .chapter-item.active-chapter {
+            border-color: var(--hover-color);
+            box-shadow: 0 0 5px rgba(0, 112, 243, 0.5);
+        }
+
+        .chapter-item h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .chapter-item .duration {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .audio-player {
+            margin-top: 3rem;
+            text-align: center;
+            background-color: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .audio-player h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .audio-controls {
+            width: 100%;
+        }
+
+        /* Media Queries */
+        @media (max-width: 600px) {
+            .story-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .home-title {
+                font-size: 2.5rem;
+            }
+            .home-subtitle {
+                font-size: 1.2rem;
+            }
+            .app-header {
+                padding: 1rem;
+            }
+            .genre-tags-container {
+                gap: 8px;
+                padding: 0 0.5rem;
+            }
+            .genre-tag {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .story-header {
+                flex-direction: row;
+                text-align: left;
+            }
+            .story-details {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-container">
+        <header class="app-header">
+            <a href="#home" class="app-title-link">
+                <h1 class="app-title">Chap Chop</h1>
+            </a>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle light and dark mode">🌙</button>
+        </header>
+
+        <main class="main-content">
+            <!-- Home Page View -->
+            <div id="home-view" class="home-container">
+                <section class="home-main">
+                    <h1 class="home-title">Welcome to Chap Chop!</h1>
+                    <p class="home-subtitle">Your destination for immersive audio dramas.</p>
+                    <!-- Genre Tags Container -->
+                    <div id="genre-tags-container" class="genre-tags-container">
+                        <!-- Genre tags will be dynamically inserted here -->
+                    </div>
+                    <div id="story-grid" class="story-grid">
+                        <!-- Story cards will be rendered here by JavaScript -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- Story Detail View -->
+            <div id="story-detail-view" class="story-detail-container">
+                <div class="story-header">
+                    <img id="detail-poster" class="story-poster-detail" alt="Story Poster">
+                    <div class="story-details">
+                        <h1 id="detail-title"></h1>
+                        <p id="detail-author" class="story-author-detail"></p>
+                        <p id="detail-description" class="story-description-detail"></p>
+                    </div>
+                </div>
+
+                <div class="chapters-section">
+                    <h2>Chapters</h2>
+                    <ul id="chapters-list" class="chapter-list">
+                        <!-- Chapters will be rendered here by JavaScript -->
+                    </ul>
+                </div>
+
+                <div id="audio-player-section" class="audio-player" style="display: none;">
+                    <h3 id="now-playing-title">Now Playing:</h3>
+                    <audio id="audio-controls" controls class="audio-controls">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; <span id="current-year"></span> Chap Chop</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- Data (simulating lib/stories.js) ---
+        const storiesData = [
+            {
+                id: 'the-algorithm-that-forgot-me',
+                title: 'The Algorithm That Forgot Me',
+                author: 'Various', // Placeholder author
+                description: 'A young woman wakes up to discover every trace of her digital life has vanished, only to find her “deleted self” is alive online.',
+                poster: 'stories/placeholder-poster.jpg', // Placeholder poster
+                genre: 'Sci-Fi',
+                chapters: [
+                    { id: 'alg-ch1', title: 'Chapter 1: Digital Erasure', audioUrl: 'stories/placeholder-audio.mp3', duration: '10:00' },
+                    { id: 'alg-ch2', title: 'Chapter 2: The Echo Online', audioUrl: 'stories/placeholder-audio.mp3', duration: '12:30' },
+                ]
+            },
+            {
+                id: 'passengers-on-the-frozen-highway',
+                title: 'Passengers on the Frozen Highway',
+                author: 'Various',
+                description: 'A freak snowstorm traps hundreds of cars on an endless highway, revealing the secrets and tensions of those stranded inside.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Drama',
+                chapters: [
+                    { id: 'froz-ch1', title: 'Chapter 1: The Whiteout', audioUrl: 'stories/placeholder-audio.mp3', duration: '11:00' },
+                    { id: 'froz-ch2', title: 'Chapter 2: Stranded', audioUrl: 'stories/placeholder-audio.mp3', duration: '14:00' },
+                ]
+            },
+            {
+                id: 'game-night-gone-wrong',
+                title: 'Game Night Gone Wrong',
+                author: 'Various',
+                description: 'A casual board game night turns terrifying when the pieces move on their own, reenacting a real crime in the town.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Horror',
+                chapters: [
+                    { id: 'game-ch1', title: 'Chapter 1: The First Move', audioUrl: 'stories/placeholder-audio.mp3', duration: '09:45' },
+                    { id: 'game-ch2', title: 'Chapter 2: Unfolding Crime', audioUrl: 'stories/placeholder-audio.mp3', duration: '11:15' },
+                ]
+            },
+            {
+                id: 'the-apartment-across-the-hall',
+                title: 'The Apartment Across the Hall',
+                author: 'Various',
+                description: 'A woman begins hearing laughter and conversations from a supposedly empty apartment, confronting a reality she doesn’t understand.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Horror',
+                chapters: [
+                    { id: 'apt-ch1', title: 'Chapter 1: Empty Echoes', audioUrl: 'stories/placeholder-audio.mp3', duration: '10:30' },
+                    { id: 'apt-ch2', title: 'Chapter 2: The Shared Wall', audioUrl: 'stories/placeholder-audio.mp3', duration: '13:00' },
+                ]
+            },
+            {
+                id: 'the-last-shift-at-the-24-hour-diner',
+                title: 'The Last Shift at the 24-Hour Diner',
+                author: 'Various',
+                description: 'On the diner’s final night, staff and patrons from past and present gather for one last meal—some who shouldn’t exist at all.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Supernatural',
+                chapters: [
+                    { id: 'diner-ch1', title: 'Chapter 1: Closing Time', audioUrl: 'stories/placeholder-audio.mp3', duration: '15:00' },
+                    { id: 'diner-ch2', title: 'Chapter 2: Uninvited Guests', audioUrl: 'stories/placeholder-audio.mp3', duration: '14:30' },
+                ]
+            },
+            {
+                id: 'voicemail-from-1999',
+                title: 'Voicemail from 1999',
+                author: 'Various',
+                description: 'A man discovers his old flip phone still receives voicemails from his teenage self, forcing him to confront forgotten dreams.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Sci-Fi',
+                chapters: [
+                    { id: 'vm-ch1', title: 'Chapter 1: A Ring from the Past', audioUrl: 'stories/placeholder-audio.mp3', duration: '12:00' },
+                    { id: 'vm-ch2', title: 'Chapter 2: Unsent Messages', audioUrl: 'stories/placeholder-audio.mp3', duration: '11:40' },
+                ]
+            },
+            {
+                id: 'deleted-scenes-from-our-lives',
+                title: 'Deleted Scenes from Our Lives',
+                author: 'Various',
+                description: 'Two ex-lovers uncover an archive of “cut moments” from their relationship, confronting memories they chose to erase.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Drama',
+                chapters: [
+                    { id: 'ds-ch1', title: 'Chapter 1: The Archive', audioUrl: 'stories/placeholder-audio.mp3', duration: '13:10' },
+                    { id: 'ds-ch2', title: 'Chapter 2: Rewinding Love', audioUrl: 'stories/placeholder-audio.mp3', duration: '12:50' },
+                ]
+            },
+            {
+                id: 'fragments-of-a-marriage-that-never-happened',
+                title: 'Fragments of a Marriage That Never Happened',
+                author: 'Various',
+                description: 'Strangers begin experiencing vivid, shared memories of a marriage that never existed, pulling them together to unravel why it feels so real.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Mystery',
+                chapters: [
+                    { id: 'frag-ch1', title: 'Chapter 1: The Shared Dream', audioUrl: 'stories/placeholder-audio.mp3', duration: '14:20' },
+                    { id: 'frag-ch2', title: 'Chapter 2: The Unwritten Vows', audioUrl: 'stories/placeholder-audio.mp3', duration: '15:10' },
+                ]
+            },
+            {
+                id: 'the-cinema-of-forgotten-lives',
+                title: 'The Cinema of Forgotten Lives',
+                author: 'Various',
+                description: 'A reopened movie theater screens lost memories and secret histories, forcing patrons to face forgotten truths.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Supernatural',
+                chapters: [
+                    { id: 'cinema-ch1', title: 'Chapter 1: The Grand Reopening', audioUrl: 'stories/placeholder-audio.mp3', duration: '10:55' },
+                    { id: 'cinema-ch2', title: 'Chapter 2: Unspooling Secrets', audioUrl: 'stories/placeholder-audio.mp3', duration: '11:20' },
+                ]
+            },
+            {
+                id: 'the-last-postcard-on-earth',
+                title: 'The Last Postcard on Earth',
+                author: 'Various',
+                description: 'A retired postman attempts to deliver the final postcard to a town that no longer exists, uncovering what was erased.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Sci-Fi',
+                chapters: [
+                    { id: 'post-ch1', title: 'Chapter 1: The Undeliverable', audioUrl: 'stories/placeholder-audio.mp3', duration: '12:00' },
+                    { id: 'post-ch2', title: 'Chapter 2: Ghost Town', audioUrl: 'stories/placeholder-audio.mp3', duration: '13:45' },
+                ]
+            },
+            {
+                id: 'the-infinite-scroll-motel',
+                title: 'The Infinite Scroll Motel',
+                author: 'Various',
+                description: 'Guests become trapped in a motel whose hallways stretch endlessly, scrolling through half-remembered rooms and regrets.',
+                poster: 'stories/placeholder-poster.jpg',
+                genre: 'Surreal',
+                chapters: [
+                    { id: 'motel-ch1', title: 'Chapter 1: Check-in, No Check-out', audioUrl: 'stories/placeholder-audio.mp3', duration: '11:30' },
+                    { id: 'motel-ch2', title: 'Chapter 2: The Endless Hallway', audioUrl: 'stories/placeholder-audio.mp3', duration: '14:00' },
+                ]
+            },
+        ];
+
+        // --- DOM Elements ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const homeView = document.getElementById('home-view');
+        const storyDetailView = document.getElementById('story-detail-view');
+        const storyGrid = document.getElementById('story-grid');
+        const detailPoster = document.getElementById('detail-poster');
+        const detailTitle = document.getElementById('detail-title');
+        const detailAuthor = document.getElementById('detail-author');
+        const detailDescription = document.getElementById('detail-description');
+        const chaptersList = document.getElementById('chapters-list');
+        const audioPlayerSection = document.getElementById('audio-player-section');
+        const nowPlayingTitle = document.getElementById('now-playing-title');
+        const audioControls = document.getElementById('audio-controls');
+        const currentYearSpan = document.getElementById('current-year');
+        const genreTagsContainer = document.getElementById('genre-tags-container'); // New element
+
+        // --- Theme Logic ---
+        let currentTheme = 'light'; // Default theme
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeToggle.textContent = theme === 'light' ? '🌙' : '☀️';
+            currentTheme = theme;
+        }
+
+        function toggleTheme() {
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(newTheme);
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Initialize theme on load
+        (function initTheme() {
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme) {
+                applyTheme(storedTheme);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light'); // Ensure light theme is explicitly set if no preference/storage
+            }
+        })();
+
+
+        // --- Render Home Page (Story Grid) ---
+        let currentFilter = 'All'; // Keep track of the active filter
+
+        function renderHomePage() {
+            storyGrid.innerHTML = ''; // Clear previous content
+            storiesData.forEach(story => {
+                const storyCardLink = document.createElement('a');
+                storyCardLink.href = `#${story.id}`; // Use hash for navigation
+                storyCardLink.classList.add('story-card-link');
+                // Use the first genre from the array for filtering, or 'Default' if not available
+                storyCardLink.setAttribute('data-genre', Array.isArray(story.genre) ? story.genre[0] : story.genre || 'Default');
+
+                const storyCard = document.createElement('div');
+                storyCard.classList.add('story-card');
+
+                const img = document.createElement('img');
+                img.src = story.poster;
+                img.alt = story.title;
+                img.width = 200;
+                img.height = 300;
+
+                const title = document.createElement('h3');
+                title.classList.add('story-card-title');
+                title.textContent = story.title 
+const author = document.createElement('p');
+                author.classList.add('story-card-author');
+                author.textContent = story.author;
+
+                storyCard.appendChild(img);
+                storyCard.appendChild(title);
+                storyCard.appendChild(author);
+                storyCardLink.appendChild(storyCard);
+                storyGrid.appendChild(storyCardLink);
+            });
+            applyGenreFilter(currentFilter); // Apply the current filter after rendering stories
+        }
+
+        // --- Genre Tag Logic ---
+        function renderGenreTags() {
+            const genres = new Set();
+            storiesData.forEach(story => {
+                // Ensure story.genre is treated as an array for iteration
+                const storyGenres = Array.isArray(story.genre) ? story.genre : [story.genre];
+                storyGenres.forEach(g => {
+                    if (g) genres.add(g); // Only add if genre is not null/undefined
+                });
+            });
+            const sortedGenres = ['All', ...Array.from(genres).sort()]; // Add 'All' and sort alphabetically
+
+            genreTagsContainer.innerHTML = ''; // Clear existing tags
+
+            sortedGenres.forEach(genre => {
+                const tag = document.createElement('span');
+                tag.classList.add('genre-tag');
+                tag.setAttribute('data-genre', genre);
+                tag.textContent = genre;
+                tag.addEventListener('click', () => {
+                    applyGenreFilter(genre);
+                    updateActiveTag(genre);
+                });
+                genreTagsContainer.appendChild(tag);
+            });
+            updateActiveTag(currentFilter); // Set initial active tag
+        }
+
+        function applyGenreFilter(selectedGenre) {
+            currentFilter = selectedGenre; // Update the global active filter
+            const storyCards = storyGrid.querySelectorAll('.story-card-link');
+
+            storyCards.forEach(card => {
+                // Get all genres for the current story card
+                const storyGenres = Array.isArray(storiesData.find(s => `#${s.id}` === card.getAttribute('href')).genre)
+                                    ? storiesData.find(s => `#${s.id}` === card.getAttribute('href')).genre
+                                    : [storiesData.find(s => `#${s.id}` === card.getAttribute('href')).genre];
+
+                if (selectedGenre === 'All' || storyGenres.includes(selectedGenre)) {
+                    card.style.display = 'flex'; // Show the card
+                    card.classList.remove('hidden');
+                } else {
+                    card.style.display = 'none'; // Hide the card
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        function updateActiveTag(selectedGenre) {
+            genreTagsContainer.querySelectorAll('.genre-tag').forEach(tag => {
+                if (tag.getAttribute('data-genre') === selectedGenre) {
+                    tag.classList.add('active');
+                } else {
+                    tag.classList.remove('active');
+                }
+            });
+        }
+
+        // --- Render Story Detail Page ---
+        let activeStory = null;
+        let activeChapter = null;
+
+        function renderStoryDetailPage(storyId) {
+            const story = storiesData.find(s => s.id === storyId);
+
+            if (!story) {
+                // If story not found, redirect to home
+                window.location.hash = 'home';
+                return;
+            }
+
+            activeStory = story;
+            activeChapter = story.chapters[0] || null; // Set first chapter as active by default
+
+            detailPoster.src = story.poster;
+            detailPoster.alt = story.title;
+            detailTitle.textContent = story.title;
+            detailAuthor.textContent = `by ${story.author}`;
+            detailDescription.textContent = story.description;
+
+            chaptersList.innerHTML = ''; // Clear previous chapters
+            story.chapters.forEach(chapter => {
+                const chapterItem = document.createElement('li');
+                chapterItem.classList.add('chapter-item');
+                if (activeChapter && chapter.id === activeChapter.id) {
+                    chapterItem.classList.add('active-chapter');
+                }
+                chapterItem.innerHTML = `
+                    <h3>${chapter.title}</h3>
+                    ${chapter.duration ? `<span class="duration">${chapter.duration}</span>` : ''}
+                `;
+                chapterItem.addEventListener('click', () => playChapter(chapter));
+                chaptersList.appendChild(chapterItem);
+            });
+
+            if (activeChapter) {
+                audioPlayerSection.style.display = 'block';
+                nowPlayingTitle.textContent = `Now Playing: ${activeChapter.title}`;
+                audioControls.src = activeChapter.audioUrl;
+            } else {
+                audioPlayerSection.style.display = 'none';
+                audioControls.src = '';
+            }
+
+            // Update active chapter styling
+            function updateActiveChapterStyle() {
+                chaptersList.querySelectorAll('.chapter-item').forEach(item => {
+                    item.classList.remove('active-chapter');
+                });
+                if (activeChapter) {
+                    const currentActiveItem = chaptersList.querySelector(`[data-chapter-id="${activeChapter.id}"]`);
+                    if (currentActiveItem) {
+                        currentActiveItem.classList.add('active-chapter');
+                    }
+                }
+            }
+            // Add data-chapter-id to chapter items for easier selection
+            chaptersList.querySelectorAll('.chapter-item').forEach((item, index) => {
+                item.setAttribute('data-chapter-id', story.chapters[index].id);
+            });
+            updateActiveChapterStyle(); // Initial update
+
+            // Ensure audio plays correctly if coming from another story or initial load
+            if (audioControls.paused && audioControls.currentTime === 0) {
+                // Don't auto-play on initial load for user experience, let them click
+            } else {
+                audioControls.play().catch(e => console.log("Autoplay blocked:", e));
+            }
+        }
+
+        function playChapter(chapter) {
+            activeChapter = chapter;
+            nowPlayingTitle.textContent = `Now Playing: ${activeChapter.title}`;
+            audioControls.src = activeChapter.audioUrl;
+            audioControls.play().catch(e => console.log("Autoplay blocked:", e));
+
+            // Update active chapter styling
+            chaptersList.querySelectorAll('.chapter-item').forEach(item => {
+                item.classList.remove('active-chapter');
+            });
+            const currentActiveItem = chaptersList.querySelector(`[data-chapter-id="${activeChapter.id}"]`);
+            if (currentActiveItem) {
+                currentActiveItem.classList.add('active-chapter');
+            }
+        }
+
+
+        // --- Router Logic (Hash-based) ---
+        function handleHashChange() {
+            const hash = window.location.hash.slice(1); // Remove '#'
+
+            if (!hash || hash === 'home') {
+                homeView.style.display = 'block';
+                storyDetailView.style.display = 'none';
+                renderGenreTags(); // Render tags when showing home view
+                renderHomePage();
+            } else {
+                homeView.style.display = 'none';
+                storyDetailView.style.display = 'block';
+                renderStoryDetailPage(hash);
+            }
+        }
+
+        window.addEventListener('hashchange', handleHashChange);
+        window.addEventListener('load', () => {
+            currentYearSpan.textContent = new Date().getFullYear(); // Set current year in footer
+            handleHashChange(); // Initial route handling
+            if (!window.location.hash) {
+                window.location.hash = 'home'; // Default to home if no hash
+            }
+        });
+    </script>
+</body>
+</html>
